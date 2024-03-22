@@ -1,6 +1,0 @@
-setup.py
-AI_Minh_Nguyen.egg-info/PKG-INFO
-AI_Minh_Nguyen.egg-info/SOURCES.txt
-AI_Minh_Nguyen.egg-info/dependency_links.txt
-AI_Minh_Nguyen.egg-info/requires.txt
-AI_Minh_Nguyen.egg-info/top_level.txt
