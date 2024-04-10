@@ -19,11 +19,15 @@ def upload_and_process_file(file_path):
             process_response = process_file(user_id)
             if process_response.status_code == 200:
                 print("File processed successfully.")
-                print(process_response.json())
+                response_json = process_response.json()
+                if 'mock_exam' in response_json:
+                    print(response_json['mock_exam'])  # Print the message from the JSON response
+                else:
+                    print("Unexpected response format.")
             else:
-                print("Error processing the file:", process_response.json())
+                print("Error processing the file:", process_response.json().get('error'))
         else:
-            print("Error uploading the file:", upload_response.json())
+            print("Error uploading the file:", upload_response.json().get('error'))
     except Exception as e:
         print("Error:", e)
 
@@ -33,6 +37,7 @@ def process_file(user_id):
         # Send user ID to request processing
         cookies = {'user_id': user_id}
         response = requests.post(PROCESS_URL, cookies=cookies)
+        
         return response
     except Exception as e:
         print("Error:", e)

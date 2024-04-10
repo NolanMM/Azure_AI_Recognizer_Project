@@ -3,6 +3,7 @@ from flask_cors import CORS
 import uuid
 from Services.Directory_Control_Services.DirectoryControl import delete_folder
 from Services.Pdf_Services.DefineTextInPdfPage import process_page
+from Services.Images_Services.openai_module import OpenAI_Module
 import time
 import os
 import tqdm
@@ -63,15 +64,18 @@ def main_process(file_path, user_id):
 
     # Sort the results dictionary by page number
     sorted_results = {key: value for key, value in sorted(results.items(), key=lambda item: item[0])}
-    # print(sorted_results)
+    #print(sorted_results)
+
+    Final_Exam = OpenAI_Module(sorted_results)
+
     total_time = time.time() - start_time  # Calculate total time
     print(f"\nTotal time taken: {total_time} seconds")
-    return sorted_results
+    return Final_Exam
 
 
 def upload_file(file, user_id):
     if file and file.filename.endswith(".pdf"):
-        user_folder = os.path.join("../output_images", user_id)  # Create a folder for the user
+        user_folder = os.path.join("./output_images", user_id)  # Create a folder for the user
         if not os.path.exists(user_folder):
             os.makedirs(user_folder)
 
@@ -94,17 +98,13 @@ def process_file(user_id):
             return jsonify({"error": "File not found or associated with the user"}), 404
 
         results = main_process(file_path, user_id)
-
-        # Convert any integer values to strings before returning the response
-        results_str = {str(key): value for key, value in results.items()}
         folder_to_delete = os.path.join('output_images', user_id)
         delete_folder(folder_to_delete)
         # Remove the user ID and file path from the dictionary after processing delete the folder
         user_files.pop(user_id, None)
-        response_data = {"results": results_str, "message": "File processed successfully"}
-        return response_data
+        return results
     except Exception as e:
-        return e
+        return jsonify({"error": str(e)}), 500  # Return error message as a dictionary with status code 500
 
 
 @app.route("/upload", methods=["POST"])
@@ -144,11 +144,11 @@ def process():
     else:
         error_message = str(response_data)
         return jsonify({"error": error_message}), 500
-
+    
 
 def main():
-    if not os.path.exists("../uploads"):
-        os.makedirs("../uploads")
+    if not os.path.exists("./uploads"):
+        os.makedirs("./uploads")
     app.run(debug=True, port=25000)
 
 
