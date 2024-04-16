@@ -1,6 +1,6 @@
 from openai import OpenAI
 
-api_key = "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"  # this is liams key (I paid for it as well since it was easier to test)
+api_key = "ImportKEY"  # this is liams key (I paid for it as well since it was easier to test)
 client = OpenAI(api_key=api_key)
 
 
