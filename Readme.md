@@ -74,7 +74,9 @@ To use the code examples in this repository, follow these steps:
 
 1. Install the required dependencies as mentioned in the [Prerequisites](#prerequisites) section.
 
-2. Run the following command in the terminal to start the server:
+2. Modify the key (Replace "ImportKEY" by your key) for OpenAI Services in Azure_AI_RECOGNIZER/Services/Images_Services/openai_module.py
+
+3. Run the following command in the terminal to start the server:
 
 * Run the server:
   
