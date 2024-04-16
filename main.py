@@ -3,12 +3,15 @@ from flask_cors import CORS
 import uuid
 from Services.Directory_Control_Services.DirectoryControl import delete_folder
 from Services.Pdf_Services.DefineTextInPdfPage import process_page
+from Services.Images_Services.openai_module import OpenAI_Module
 import time
 import os
 import tqdm
 import multiprocessing
 import threading
 import pdfplumber
+import re
+
 
 # Dictionary to store user IDs and their corresponding file paths
 user_files = {}
@@ -63,7 +66,10 @@ def main_process(file_path, user_id):
 
     # Sort the results dictionary by page number
     sorted_results = {key: value for key, value in sorted(results.items(), key=lambda item: item[0])}
-    # print(sorted_results)
+    print(sorted_results)
+
+    # final_exam = OpenAI_Module(sorted_results)
+
     total_time = time.time() - start_time  # Calculate total time
     print(f"\nTotal time taken: {total_time} seconds")
     return sorted_results
@@ -71,7 +77,7 @@ def main_process(file_path, user_id):
 
 def upload_file(file, user_id):
     if file and file.filename.endswith(".pdf"):
-        user_folder = os.path.join("../output_images", user_id)  # Create a folder for the user
+        user_folder = os.path.join("./output_images", user_id)  # Create a folder for the user
         if not os.path.exists(user_folder):
             os.makedirs(user_folder)
 
@@ -87,6 +93,25 @@ def upload_file(file, user_id):
         return "Invalid file format, only PDF files are allowed"
 
 
+def parse_mock_exam(mock_exam_string):
+    exam_string = mock_exam_string.split("**Mock Exam**")[1]
+
+    # Use regex to extract all sections
+    sections_title_list = re.findall(r'\*\*(.*?)\*\*', exam_string, re.DOTALL)
+    section_content_list = []
+
+    # Print each section with its respective questions
+    for i in range(len(sections_title_list) - 1):
+        section_title = sections_title_list[i].strip()
+        start_index = exam_string.find(sections_title_list[i]) + len(sections_title_list[i])
+        end_index = exam_string.find(sections_title_list[i + 1])
+        section_content = exam_string[start_index:end_index].strip()
+        # print(f"Section Title: {section_title}\nContent:\n{section_content}\n")
+        section_content_list.append(section_content)
+
+    return section_content_list
+
+
 def process_file(user_id):
     try:
         file_path = user_files.get(user_id)
@@ -94,14 +119,21 @@ def process_file(user_id):
             return jsonify({"error": "File not found or associated with the user"}), 404
 
         results = main_process(file_path, user_id)
-
         # Convert any integer values to strings before returning the response
         results_str = {str(key): value for key, value in results.items()}
+        print(results_str)
+        final_exam = OpenAI_Module(results_str)
+
+        # process_string = "'''" + str(final_exam) + "**'''"
+        # print(process_string)
+        # section_content = parse_mock_exam(process_string)
+        # print(section_content)
+
         folder_to_delete = os.path.join('output_images', user_id)
         delete_folder(folder_to_delete)
         # Remove the user ID and file path from the dictionary after processing delete the folder
         user_files.pop(user_id, None)
-        response_data = {"results": results_str, "message": "File processed successfully"}
+        response_data = {"results": str(final_exam), "message": "File processed successfully"}
         return response_data
     except Exception as e:
         return e
@@ -144,11 +176,11 @@ def process():
     else:
         error_message = str(response_data)
         return jsonify({"error": error_message}), 500
-
+    
 
 def main():
-    if not os.path.exists("../uploads"):
-        os.makedirs("../uploads")
+    if not os.path.exists("./uploads"):
+        os.makedirs("./uploads")
     app.run(debug=True, port=25000)
 
 

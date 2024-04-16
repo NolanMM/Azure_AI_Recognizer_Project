@@ -5,6 +5,7 @@ nltk.download('words')
 english_words_ = words.words()
 
 
+
 def is_coherent(text):
     """
     Check if the text is coherent using an English dictionary.

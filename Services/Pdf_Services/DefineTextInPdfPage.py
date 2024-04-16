@@ -1,4 +1,4 @@
-from Services.coherence_checker import is_coherent
+from Services.coherence_checker import is_coherent_nltk
 from Services.Images_Services.ProcessImage import process_image
 import easyocr
 import threading
@@ -18,7 +18,7 @@ def define_text_in_pdf_page(image_page_path, page_number, output_folder):
     #     r'0-9]+)?|pi|π|e|inf|infty|∞|sqrt|log|ln|sin|cos|tan|cot|sec|csc)\b|[\(\)\[\]\{\}+\-*/\^=,]')
     for detection in result:
         text = detection[1]
-        if not is_coherent(text):
+        if not is_coherent_nltk(text):
             math_formula_latex_with_coordinates = process_image(threading.current_thread().ident, image_page_path,
                                                                 page_number, output_folder)
             break

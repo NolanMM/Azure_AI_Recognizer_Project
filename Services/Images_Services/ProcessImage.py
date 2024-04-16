@@ -19,8 +19,8 @@ def format_polygon(polygon):
 def process_image(thread_id, image_path, page_number, user_folder):
     math_text_coordinates = []  # Text list to store all the text in the page with coordinates inside the page
     text_list = []  # Text list to store all the text in the page with coordinates inside the page
-    endpoint = "https://demoformrecogdata.cognitiveservices.azure.com/"
-    key = "8795117727734d618b007ea695b5f6ef"
+    endpoint = "https://nolanm-document-intelligence.cognitiveservices.azure.com/"
+    key = "17912dc741e34f12aa266b7edc34fb52"
 
     document_analysis_client = DocumentAnalysisClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)

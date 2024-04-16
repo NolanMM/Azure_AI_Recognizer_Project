@@ -5,7 +5,7 @@ import shutil
 def delete_folder(folder_path):
     try:
         full_path = os.getcwd()
-        desired_path = full_path.split(".venv")[0].rstrip(os.path.sep)
+        desired_path = full_path.split("venv")[0].rstrip(os.path.sep)
         path = os.path.join(desired_path, folder_path)
         # Delete the folder and its contents
         shutil.rmtree(path)
