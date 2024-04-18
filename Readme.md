@@ -54,13 +54,7 @@ We need to create a new `Python 3.11` / `Python 3.10` virtual enviroment for thi
     source venv/Scripts/activate
   ```
 
-* Option 1: Install dependencies using pip package:
-  
-  ```bash
-    pip install AI-ML-Formulas-Recognizer-Extraction==1.0
-  ```
-  
-* Option 2: Install requirements.txt: Automatically installed dependencies that needed for the project:
+* Install requirements.txt: Automatically installed dependencies that needed for the project:
   
   ```bash
     pip install -r requirements.txt
